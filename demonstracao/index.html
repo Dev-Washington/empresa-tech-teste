@@ -11,9 +11,59 @@
     <link rel="stylesheet" href="/empresa-tech-teste/src/themes/central.css" />
   </head>
   <body>
-    <div class="pages-note">Demonstração pública · Use apenas dados fictícios. As alterações ficam neste navegador.</div><div id="app"><main class="loading">Abrindo a EMPRESA TECH TESTE…</main></div>
+    <div class="pages-note">Demonstração pública · Use apenas dados fictícios. As alterações ficam neste navegador.</div><div id="app"><div data-demo-initial>
+    <main class="area-chooser" aria-labelledby="area-title">
+      <div class="area-chooser-inner">
+        <header class="area-intro">
+          <div class="brand area-brand"><img src="/empresa-tech-teste/marca.svg" alt=""><span>EMPRESA<span class="brand-sub">TECH TESTE</span></span></div>
+          <h1 id="area-title" tabindex="-1">Olá, Marina! Qual portal você quer abrir?</h1>
+          <p>Você pode trocar de área a qualquer momento pelo botão no topo da tela.</p>
+        </header>
+        <nav class="area-options" aria-label="Portais disponíveis"><a class="area-card area-administrativo" href="/empresa-tech-teste/crm/#administrativo" aria-label="Abrir portal Administrativo e Operacional">
+            <span class="area-symbol"><svg class="icon" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V3h12v18 M16 10h4v11 M2 21h20 M8 7h4 M8 11h4 M8 15h4"/></svg></span>
+            <h2>Administrativo e Operacional</h2><p>Operação e gestão interna. As seções disponíveis seguem o seu cargo.</p>
+            <span class="area-open">Abrir <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"/></svg></span>
+          </a><a class="area-card area-vendas" href="/empresa-tech-teste/crm/#comercial" aria-label="Abrir portal Vendas">
+            <span class="area-symbol"><svg class="icon" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 9v6l-4 2v-8z"/></svg></span>
+            <h2>Vendas</h2><p>Oportunidades, prospecção, calls e reuniões comerciais.</p>
+            <span class="area-open">Abrir <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"/></svg></span>
+          </a><a class="area-card area-executivo" href="/empresa-tech-teste/crm/#executivo" aria-label="Abrir portal Executivo">
+            <span class="area-symbol"><svg class="icon" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18 M6 16v-4 M12 16V8 M18 16V4"/></svg></span>
+            <h2>Executivo</h2><p>Indicadores de todas as áreas, com acesso aos registros de origem.</p>
+            <span class="area-open">Abrir <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"/></svg></span>
+          </a>
+        </nav>
+        
+      </div>
+    </main></div></div>
     <dialog id="dialog"></dialog>
     <div id="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="/empresa-tech-teste/src/pages/app.js"></script>
+    <script>// Inserido no HTML para oferecer recuperação mesmo quando o aplicativo falha ao baixar.
+(function () {
+  function showRetry() {
+    var initial = document.querySelector("[data-demo-initial]");
+    if (!initial || initial.querySelector("[role=alert]")) return;
+    var notice = document.createElement("div");
+    notice.className = "pages-note";
+    notice.setAttribute("role", "alert");
+    notice.appendChild(
+      document.createTextNode(
+        "O CRM demorou para abrir. Verifique sua conexão. ",
+      ),
+    );
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "btn outline";
+    retry.textContent = "Tentar novamente";
+    retry.onclick = function () {
+      location.reload();
+    };
+    notice.appendChild(retry);
+    initial.insertBefore(notice, initial.firstChild);
+  }
+  setTimeout(showRetry, 30000);
+  import("/empresa-tech-teste/mobile-app.js?v=b91caac96b53").catch(showRetry);
+})();
+</script>
   </body>
 </html>

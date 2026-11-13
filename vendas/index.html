@@ -11,9 +11,35 @@
     <link rel="stylesheet" href="/empresa-tech-teste/src/themes/central.css" />
   </head>
   <body>
-    <div class="pages-note">Demonstração pública · Use apenas dados fictícios. As alterações ficam neste navegador.</div><div id="app"><main class="loading">Abrindo a EMPRESA TECH TESTE…</main></div>
+    <div class="pages-note">Demonstração pública · Use apenas dados fictícios. As alterações ficam neste navegador.</div><div id="app"><div data-demo-initial><main class="loading">Abrindo a EMPRESA TECH TESTE…</main></div></div>
     <dialog id="dialog"></dialog>
     <div id="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="/empresa-tech-teste/src/pages/app.js"></script>
+    <script>// Inserido no HTML para oferecer recuperação mesmo quando o aplicativo falha ao baixar.
+(function () {
+  function showRetry() {
+    var initial = document.querySelector("[data-demo-initial]");
+    if (!initial || initial.querySelector("[role=alert]")) return;
+    var notice = document.createElement("div");
+    notice.className = "pages-note";
+    notice.setAttribute("role", "alert");
+    notice.appendChild(
+      document.createTextNode(
+        "O CRM demorou para abrir. Verifique sua conexão. ",
+      ),
+    );
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "btn outline";
+    retry.textContent = "Tentar novamente";
+    retry.onclick = function () {
+      location.reload();
+    };
+    notice.appendChild(retry);
+    initial.insertBefore(notice, initial.firstChild);
+  }
+  setTimeout(showRetry, 30000);
+  import("/empresa-tech-teste/mobile-app.js?v=b91caac96b53").catch(showRetry);
+})();
+</script>
   </body>
 </html>

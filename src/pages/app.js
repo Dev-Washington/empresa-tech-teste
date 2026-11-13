@@ -1,3 +1,4 @@
+import { areaChooser, zoneNames } from "./seletor.js";
 import { adminMenu, execMenu, modules } from "../data/gestao.js";
 import { can, moduleCap, roleName } from "../data/permissoes.js";
 import { adminPage } from "./administrativo.js";
@@ -197,23 +198,6 @@ const menus = {
   ],
   executivo: execMenu,
 };
-const zoneNames = {
-    administrativo: "Administrativo e Operacional",
-    vendas: "Vendas",
-    executivo: "Executivo",
-  },
-  zoneIcons = {
-    administrativo: "building",
-    vendas: "funnel",
-    executivo: "chart",
-  };
-const zoneDescriptions = {
-  administrativo:
-    "Operação e gestão interna. As seções disponíveis seguem o seu cargo.",
-  vendas: "Oportunidades, prospecção, calls e reuniões comerciais.",
-  executivo:
-    "Indicadores de todas as áreas, com acesso aos registros de origem.",
-};
 let zone = "administrativo";
 const zones = () =>
   Object.keys(menus).filter((k) =>
@@ -234,28 +218,7 @@ function showAreaChooser() {
     allowed.includes(k),
   );
   const firstName = D.user.name.trim().split(/\s+/)[0];
-  app.innerHTML = `
-    <main class="area-chooser" aria-labelledby="area-title">
-      <div class="area-chooser-inner">
-        <header class="area-intro">
-          <div class="brand area-brand"><img src="/empresa-tech-teste/marca.svg" alt=""><span>EMPRESA<span class="brand-sub">TECH TESTE</span></span></div>
-          <h1 id="area-title" tabindex="-1">Olá, ${esc(firstName)}! Qual portal você quer abrir?</h1>
-          <p>${portals.length > 1 ? "Você pode trocar de área a qualquer momento pelo botão no topo da tela." : "Abra o portal disponível para o seu perfil."}</p>
-        </header>
-        <nav class="area-options" aria-label="Portais disponíveis">${portals
-          .map(
-            (k) =>
-              `<a class="area-card area-${k}" href="#${items(k)[0]}" aria-label="Abrir portal ${zoneNames[k]}">
-            <span class="area-symbol">${icon(zoneIcons[k], 27)}</span>
-            <h2>${zoneNames[k]}</h2><p>${zoneDescriptions[k]}</p>
-            <span class="area-open">Abrir ${icon("arrow", 16)}</span>
-          </a>`,
-          )
-          .join("")}
-        </nav>
-        <button class="area-logout" type="button" data-act="logout">${icon("logout", 16)} Sair da demonstração</button>
-      </div>
-    </main>`;
+  app.innerHTML = areaChooser(firstName, portals, k => "#" + items(k)[0]);
 }
 function shell() {
   if (view === "areas") return showAreaChooser();
@@ -950,8 +913,10 @@ async function act(a) {
   });
 }
 async function init() {
-  if (localStorage.getItem("central:tema") === "dark")
-    document.documentElement.classList.add("dark");
+  try {
+    if (localStorage.getItem("central:tema") === "dark")
+      document.documentElement.classList.add("dark");
+  } catch { /* A navegação funciona mesmo sem armazenamento de preferências. */ }
   const p = location.pathname.slice(19).replace(/\/$/, "") || "/crm";
   if (p === "/empresa" || p === "/vendas") {
     marketing(p === "/vendas", (await api("session")).demo);
