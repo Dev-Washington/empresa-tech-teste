@@ -1,0 +1,6 @@
+const worker=new Worker(new URL("./demo-worker.js",import.meta.url),{type:"module"});
+let serial=0;const pending=new Map();worker.onmessage=({data})=>{pending.get(data.id)?.resolve(data);pending.delete(data.id)};worker.onerror=e=>{for(const x of pending.values())x.reject(Error(e.message || "Não foi possível carregar a demonstração."));pending.clear()};
+function call(p,m="GET",body){return new Promise((resolve,reject)=>{const id=++serial;pending.set(id,{resolve,reject});worker.postMessage({id,p:"/api/"+p,m,body})})}
+export async function api(p,m="GET",body){const {status,result}=await call(p,m,body);if(status>=400)throw Error(result.error);return result}
+document.addEventListener("click",async e=>{const a=e.target.closest("a[href]");if(!a)return;const u=new URL(a.href);if(!u.pathname.includes("/api/")||u.origin!==location.origin)return;e.preventDefault();const r=await call(u.pathname.split("/api/")[1]+u.search);if(r.status>=400){alert(r.result.error);return}const url=URL.createObjectURL(new Blob([r.result],{type:r.headers["Content-Type"]||"application/octet-stream"})),l=document.createElement("a");l.href=url;l.download=decodeURIComponent(r.headers["Content-Disposition"]?.split("''").at(1)|| (u.pathname.includes("exportar")?"dados-demo.zip":"anexo"));l.click();setTimeout(()=>URL.revokeObjectURL(url),3000)});
+
